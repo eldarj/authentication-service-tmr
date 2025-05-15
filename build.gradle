@@ -1,0 +1,74 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'nu.studer.jooq' version '8.2'
+}
+
+group = 'com.ejahijagic'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(24)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.jooq:jooq'
+	jooqGenerator 'org.postgresql:postgresql'
+	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'com.auth0:java-jwt:4.4.0'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+jooq {
+	version = '3.19.7'
+	configurations {
+		main {
+			generationTool {
+				logging = org.jooq.meta.jaxb.Logging.WARN
+				jdbc {
+					driver = 'org.postgresql.Driver'
+					url = 'jdbc:postgresql://localhost:5432/authdb_dev'
+					user = 'dev_user'
+					password = 'dev_pass'
+				}
+				generator {
+					name = 'org.jooq.codegen.DefaultGenerator'
+					database {
+						name = 'org.jooq.meta.postgres.PostgresDatabase'
+						inputSchema = 'public'
+					}
+					generate {
+						daos = true
+						pojos = true
+						records = true
+					}
+					target {
+						packageName = 'com.ejahijagic.auth.jooq'
+						directory = 'build/generated-src/jooq/main'
+					}
+				}
+			}
+		}
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir 'build/generated-src/jooq/main'
+		}
+	}
+}

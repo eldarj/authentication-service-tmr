@@ -1,0 +1,85 @@
+openapi: 3.0.1
+info:
+  title: Authentication Service API
+  version: 1.0.0
+  description: API for OTP challenge and verification
+paths:
+  /api/auth/challenge:
+    post:
+      summary: Submit an OTP challenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChallengeRequest'
+      responses:
+        '200':
+          description: Challenge accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /api/auth/verify:
+    post:
+      summary: Verify OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRequest'
+      responses:
+        '200':
+          description: OTP verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service is healthy
+  /readiness:
+    get:
+      summary: Readiness probe
+      responses:
+        '200':
+          description: Service is ready
+components:
+  schemas:
+    ChallengeRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        locale:
+          type: string
+        clientId:
+          type: string
+        deviceId:
+          type: string
+        ipAddress:
+          type: string
+    VerifyRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        otp:
+          type: string
+        challengeId:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        challengeId:
+          type: string
+        jwt:
+          type: string

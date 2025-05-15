@@ -1,0 +1,1 @@
+CREATE TABLE users (phone_number VARCHAR(20) PRIMARY KEY, last_login TIMESTAMP);
